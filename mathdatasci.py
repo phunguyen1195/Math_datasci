@@ -2,6 +2,7 @@ import numpy as np
 from scipy import linalg
 from discreteMarkovChain import markovChain
 from sympy import *
+import copy
 
 
 class mathdatasci:
@@ -24,6 +25,7 @@ class mathdatasci:
             self.get_u()
             self.get_Pnl()
         self.normalize_stochastic_matrix()
+        
     
     def get_v (self):
         v = np.zeros((self.l.size, self.l.itemsize))
@@ -43,7 +45,7 @@ class mathdatasci:
         self.Pl = Pl
 
     def normalize_stochastic_matrix (self):
-        Pl_normalize_stochastic = self.Pl
+        Pl_normalize_stochastic = copy.deepcopy(self.Pl)
         for i in range (int (np.sqrt(Pl_normalize_stochastic.size))):
             k = 1 - Pl_normalize_stochastic[i][i]
             Pl_normalize_stochastic[i][i] = 0
@@ -58,8 +60,8 @@ class mathdatasci:
         return self.eigen_stationarydist_normalize_Pl
 
     def get_eigen_stationarydist_Pl(self):
-        w, vl, vr = linalg.eig(self.Pl_normalize_stochastic, left=True)
-        mc = markovChain(self.Pl_normalize_stochastic)
+        w, vl, vr = linalg.eig(self.Pl, left=True)
+        mc = markovChain(self.Pl)
         mc.computePi('linear')
         self.eigen_stationarydist_Pl =  {'eigen values': np.around(w, 3), 'eigen vector': np.around(vr, 3),'stationary distribution': np.around(mc.pi,3)}
         return self.eigen_stationarydist_Pl
